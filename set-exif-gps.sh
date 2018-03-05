@@ -40,7 +40,9 @@ fi
 case "$1" in
     --help|-h|"") usage; exit 0 ;;
     --*) LATLON=`set_location ${1#--}`; shift ;;
-      *) ME=${0%.sh}; ME=${ME/*set-exif-gps-}; LATLON="`set_location $ME`" ;;
+esac
+case "$0" in
+    *set-exif-gps-*) ME=${0%.sh}; ME=${ME/*set-exif-gps-}; LATLON="`set_location $ME`" ;;
 esac
 
 

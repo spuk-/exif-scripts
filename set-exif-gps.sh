@@ -1,6 +1,25 @@
 #!/bin/bash
 
 
+usage()
+{
+    MYNAME=`basename $0`
+    cat <<FIN
+
+$MYNAME - sets EXIF GPS tags for image/video files (needs exiv2)
+
+Usage:
+$MYNAME --\$location FILE..            : sets \$location (from locations.sh) for FILE..
+or
+$MYNAME --manual FILE..               : sets manually entered (needs zenity) location for FILE..
+or
+ln -s $0 set-exif-gps-\$location
+./set-exif-gps-\$location FILE         : sets \$location (from locations.sh) for FILE..
+
+FIN
+}
+
+
 if [ "0$DEBUG" -ne 0 ]; then
     echo
     echo '*** DEBUG ***'
@@ -11,9 +30,15 @@ else
 fi
 shopt -s expand_aliases
 
-. "`dirname $0`/locations.sh" || exit 1
+
+. "`dirname $0`/locations.sh"
+if [ $? -ne 0 ]; then
+    echo "'locations.sh' must be in the same directory as this script (i.e. '`dirname $0`')." >&2
+    exit 1
+fi
 
 case "$1" in
+    --help|-h|"") usage; exit 0 ;;
     --*) LATLON=`set_location ${1#--}`; shift ;;
       *) ME=${0%.sh}; ME=${ME/*set-exif-gps-}; LATLON="`set_location $ME`" ;;
 esac
